@@ -1,0 +1,38 @@
+version: "3.9"
+
+services:
+  notification:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name:   notification
+    restart: always
+    command: python   notification.py
+    depends_on:
+      - db
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bot
+    restart: always
+    command: python bot.py
+    depends_on:
+      - db
+
+  db:
+    image: postgres:14.0-alpine
+    container_name: dtb_postgres
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - TZ=Europe/Moscow
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=bot
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:
